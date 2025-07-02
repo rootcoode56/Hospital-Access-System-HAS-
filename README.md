@@ -7,4 +7,4 @@ Group Members are:
 1. QM Asif Tanjim 2211402042
 2. Nowren Mahjabin Khan 2211129642
 3. Dewan Fahmida 1822214642
-4. Md. Ragib Shahariar Noman 2211292642
+4. Md. Ragib Shahriar Noman 2211292642
