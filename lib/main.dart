@@ -6,10 +6,12 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:has/booking.dart';
 import 'package:has/dashboard.dart';
 import 'package:has/hasnearme.dart';
+import 'package:has/presciptionpage.dart';
+import 'package:has/searchsymptompspage.dart';
 import 'package:has/settings.dart';
-import 'package:has/doctorslist.dart';
-import 'package:has/askme.dart';
-//import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:has/doctorsearch.dart';
+import 'package:has/updateprofilepage.dart';
+import 'package:has/askmepage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,14 +33,14 @@ class MyApp extends StatelessWidget {
         '/dashboard': (context) => const DashboardPage(),
         '/forget_password': (context) => const ForgetPasswordScreen(),
         '/create_account': (context) => const CreateAccountScreen(),
-        //'/search':(context) => const SearchSymptompsPage(),
+        '/search': (context) => const SearchSymptomsPage(),
         '/specialist': (context) => DoctorListPage(),
         '/booking': (context) => const BookAppointmentPage(),
         '/nearby': (context) => const HasNearMe(),
-
-        //'/askme': (context) => const
-        //'/prescriptions': (context) => const PrescriptionsPage(),
-        '/settings': (contex) => const SettingsPage(),
+        '/askmepage': (context) => const Askmepage(),
+        '/prescriptions': (context) => const PrescriptionPage(),
+        '/settings': (context) => const SettingsPage(),
+        '/updateProfile': (context) => const UpdateProfilePage(),
         // add other routes as needed
       },
     );
@@ -57,29 +59,18 @@ class _CroppedBackgroundScreenState extends State<CroppedBackgroundScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  bool _isLoading = false;
-  String? _errorMessage;
-
   Future<void> _login() async {
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
 
-    setState(() {
-      _errorMessage = null;
-    });
-
     if (email.isEmpty || password.isEmpty) {
-      setState(() {
-        _errorMessage = "Please fill all fields";
-      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please enter email and password")),
+      );
       return;
     }
 
     try {
-      setState(() {
-        _isLoading = true;
-      });
-
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
@@ -91,13 +82,21 @@ class _CroppedBackgroundScreenState extends State<CroppedBackgroundScreen> {
         );
       }
     } on FirebaseAuthException catch (e) {
-      setState(() {
-        _errorMessage = e.message ?? "Login failed";
-      });
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      String errorMessage =
+          "Login failed. Please try again with right email or password.";
+      if (e.code == 'user-not-found') {
+        errorMessage = "No user found for this email.";
+      } else if (e.code == 'wrong-password') {
+        errorMessage = "Incorrect password. Please try again.";
+      }
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(errorMessage)));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("An error occurred. Please try again.")),
+      );
     }
   }
 
@@ -123,7 +122,6 @@ class _CroppedBackgroundScreenState extends State<CroppedBackgroundScreen> {
 
       return await FirebaseAuth.instance.signInWithCredential(credential);
     } catch (e) {
-      print('Google sign-in failed: $e');
       return null;
     }
   }
@@ -162,16 +160,19 @@ class _CroppedBackgroundScreenState extends State<CroppedBackgroundScreen> {
                         222,
                         222,
                         229,
+                        // ignore: deprecated_member_use
                       ).withOpacity(0.85),
                       borderRadius: BorderRadius.circular(25),
                       boxShadow: [
                         BoxShadow(
+                          // ignore: deprecated_member_use
                           color: Colors.black.withOpacity(0.4),
                           blurRadius: 12,
                           offset: const Offset(0, 6),
                         ),
                       ],
                       border: Border.all(
+                        // ignore: deprecated_member_use
                         color: Colors.white.withOpacity(0.3),
                         width: 1.5,
                       ),
