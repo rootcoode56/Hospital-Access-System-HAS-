@@ -1,10 +1,16 @@
-# Hospital-Access-System-HAS-
-Hospital Access System is a user-friendly mobile platform designed to streamline healthcare navigation. It connects patients to nearby hospitals, specialists, and essential services with real-time availability and chatbot support. Built for accessibility and regional inclusivity, it empowers users to find care faster and smarter. It's an academic project of courese CSE299.
+# has
 
-Directed By Intisar Tahmid Naheen Sir
+A new Flutter project.
 
-Group Members are:
-1. QM Asif Tanjim 2211402042
-2. Nowren Mahjabin Khan 2211129642
-3. Dewan Fahmida 1822214642
-4. Md. Ragib Shahriar Noman 2211292642
+## Getting Started
+
+This project is a starting point for a Flutter application.
+
+A few resources to get you started if this is your first Flutter project:
+
+- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
+- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+
+For help getting started with Flutter development, view the
+[online documentation](https://docs.flutter.dev/), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
