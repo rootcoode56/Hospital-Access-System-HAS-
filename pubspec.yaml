@@ -18,6 +18,8 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # of the product and file versions while build-number is used as the build suffix.
 version: 1.0.0+1
 
+
+
 environment:
   sdk: ^3.8.1
 
@@ -30,16 +32,31 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  firebase_core: ^3.15.1
-  firebase_auth: ^5.6.2
-  google_sign_in: ^7.1.0
-  url_launcher: ^6.1.7
-  provider: ^6.1.1
+  firebase_core: ^4.0.0
+  firebase_database: ^12.0.0
+  firebase_auth: ^6.0.1
+  google_sign_in: ^7.1.1
+  url_launcher: ^6.3.2
+  provider: ^6.1.5
   cloud_firestore:
   flutter_localizations:
     sdk: flutter
   intl: ^0.20.2
-
+  pdf: ^3.11.3
+  path_provider: ^2.1.5
+  permission_handler: ^12.0.1
+  open_file: ^3.5.10
+  printing: ^5.14.2
+  clipboard: ^2.0.2
+  firebase_storage: ^13.0.0
+  image_picker: ^1.1.2
+  shared_preferences: ^2.5.3
+  webview_flutter: ^4.13.0
+  chat_gpt_sdk: ^3.1.5
+  file_picker: ^10.3.1
+  get: ^4.7.2
+  chat_bubbles: ^1.7.0
+  
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -52,6 +69,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -95,6 +113,11 @@ flutter:
   - assets/avater.png
   - assets/SBG.jpg
   - assets/appointment.jpg
+  - assets/Nurse.jpg
+  - assets/DocsInfo.json
+  - assets/ChatBG.jpg
+  - assets/symptoms_diseases.json
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 
