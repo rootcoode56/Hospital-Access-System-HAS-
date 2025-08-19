@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 class BookAppointmentPage extends StatefulWidget {
   const BookAppointmentPage({super.key});
@@ -11,6 +13,9 @@ class BookAppointmentPage extends StatefulWidget {
 class _BookAppointmentPageState extends State<BookAppointmentPage> {
   final TextEditingController _doctorController = TextEditingController();
 
+  List<String> _allDoctors = [];
+  List<String> _filteredDoctors = [];
+
   final List<String> _appointmentSlots = [
     "Wednesday 3PM",
     "Thursday 3/4PM",
@@ -19,6 +24,56 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
 
   String? _selectedSlot;
   bool _bookingConfirmed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDoctorsFromJson();
+    _doctorController.addListener(_onDoctorSearch);
+  }
+
+  @override
+  void dispose() {
+    _doctorController.removeListener(_onDoctorSearch);
+    _doctorController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadDoctorsFromJson() async {
+    try {
+      final String jsonString = await rootBundle.loadString(
+        'assets/DocsInfo.json',
+      );
+      final List<dynamic> jsonData = json.decode(jsonString);
+
+      List<String> doctors = [];
+      for (final item in jsonData) {
+        if (item is Map<String, dynamic>) {
+          doctors.add(item['Name']?.toString() ?? "Unknown");
+        }
+      }
+
+      setState(() {
+        _allDoctors = doctors;
+        _filteredDoctors = List.from(_allDoctors);
+      });
+    } catch (e) {
+      print('Error loading JSON: $e');
+    }
+  }
+
+  void _onDoctorSearch() {
+    final query = _doctorController.text.toLowerCase();
+    setState(() {
+      if (query.isEmpty) {
+        _filteredDoctors = List.from(_allDoctors);
+      } else {
+        _filteredDoctors = _allDoctors
+            .where((doctor) => doctor.toLowerCase().contains(query))
+            .toList();
+      }
+    });
+  }
 
   void _bookAppointment() {
     if (_selectedSlot != null) {
@@ -39,10 +94,7 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
         children: [
           // Background Image
           Positioned.fill(
-            child: Image.asset(
-              'assets/appointment.jpg', // Replace with your asset path
-              fit: BoxFit.cover,
-            ),
+            child: Image.asset('assets/appointment.jpg', fit: BoxFit.cover),
           ),
 
           // Glassmorphism overlay
@@ -55,7 +107,7 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
             ),
           ),
 
-          // Foreground UI
+          // Main content
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(20),
@@ -65,8 +117,8 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: _glassContainer(
-                      width: 180, // Custom width
-                      height: 50, // Custom height
+                      width: 180,
+                      height: 50,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: const Center(
                         child: Text(
@@ -83,6 +135,7 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
 
                   const SizedBox(height: 160),
 
+                  // Doctor Name Input
                   _glassContainer(
                     child: TextField(
                       controller: _doctorController,
@@ -97,6 +150,39 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                     ),
                   ),
 
+                  const SizedBox(height: 8),
+
+                  // Filtered Doctor Names List
+                  if (_filteredDoctors.isNotEmpty)
+                    _glassContainer(
+                      height: 120,
+                      padding: const EdgeInsets.all(8),
+                      child: ListView.builder(
+                        itemCount: _filteredDoctors.length,
+                        itemBuilder: (context, index) {
+                          final doctor = _filteredDoctors[index];
+                          return GestureDetector(
+                            onTap: () {
+                              _doctorController.text = doctor;
+                              setState(() {
+                                _filteredDoctors = [doctor];
+                              });
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 6),
+                              child: Text(
+                                doctor,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+
                   const SizedBox(height: 16),
 
                   _glassContainer(
@@ -108,6 +194,7 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
 
                   const SizedBox(height: 12),
 
+                  // Appointment slots
                   ..._appointmentSlots.map((slot) {
                     final isSelected = _selectedSlot == slot;
                     return GestureDetector(
@@ -143,6 +230,7 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                       ),
                     );
                   }),
+
                   const SizedBox(height: 20),
 
                   Center(
@@ -165,26 +253,6 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                     ),
                   ),
 
-                  const Spacer(),
-
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black.withOpacity(0.6),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
-                      child: const Text(
-                        "Go Back",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
-
                   if (_bookingConfirmed)
                     const Padding(
                       padding: EdgeInsets.only(top: 10),
@@ -202,12 +270,30 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
               ),
             ),
           ),
+
+          // Go Back button at bottom-left
+          Positioned(
+            bottom: 20,
+            left: 20,
+            child: ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black.withOpacity(0.6),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
+              child: const Text(
+                "Go Back",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  /// Glossy Container with optional width/height/padding
   Widget _glassContainer({
     required Widget child,
     EdgeInsetsGeometry padding = const EdgeInsets.all(14),

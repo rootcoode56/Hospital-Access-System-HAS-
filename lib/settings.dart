@@ -122,8 +122,6 @@ class _SettingsPageState extends State<SettingsPage> {
                               ),
                             ),
 
-                            _settingsTile("Theme", _showThemeDialog),
-                            _settingsTile("Language", _showLanguageDialog),
                             _settingsTile("Share Feedback", _openFeedbackForm),
                             _settingsTile("Rate Us", _rateUs),
 
@@ -196,64 +194,6 @@ class _SettingsPageState extends State<SettingsPage> {
         color: Colors.white,
       ),
       onTap: onTap,
-    );
-  }
-
-  void _showThemeDialog() {
-    showDialog(
-      context: context,
-      builder: (_) => SimpleDialog(
-        title: const Text("Select Theme"),
-        children: [
-          _themeOption("Light Mode", ThemeMode.light),
-          _themeOption("Dark Mode", ThemeMode.dark),
-          _themeOption("Device Mode", ThemeMode.system),
-        ],
-      ),
-    );
-  }
-
-  Widget _themeOption(String label, ThemeMode mode) {
-    return SimpleDialogOption(
-      child: Text(label),
-      onPressed: () {
-        // TODO: Apply theme using provider or state management
-        Navigator.pop(context);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Theme set to $label")));
-      },
-    );
-  }
-
-  void _showLanguageDialog() {
-    showDialog(
-      context: context,
-      builder: (_) => SimpleDialog(
-        title: const Text("Select Language"),
-        children: [
-          SimpleDialogOption(
-            child: const Text("English"),
-            onPressed: () {
-              // TODO: Set app locale to English
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Language set to English")),
-              );
-            },
-          ),
-          SimpleDialogOption(
-            child: const Text("বাংলা"),
-            onPressed: () {
-              // TODO: Set app locale to Bangla
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("ভাষা সেট হয়েছে বাংলা")),
-              );
-            },
-          ),
-        ],
-      ),
     );
   }
 
