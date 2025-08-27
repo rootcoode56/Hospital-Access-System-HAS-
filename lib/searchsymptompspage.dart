@@ -109,7 +109,13 @@ class _SearchSymptomsPageState extends State<SearchSymptomsPage> {
       return;
     }
 
-    final searchLower = _searchText.toLowerCase();
+    // Split input by comma and trim spaces
+    final searchTerms = _searchText
+        .toLowerCase()
+        .split(',')
+        .map((term) => term.trim())
+        .where((term) => term.isNotEmpty)
+        .toList();
 
     List<Map<String, dynamic>> filteredDiseases = _allDiseases.where((disease) {
       final diseaseName = disease['disease']?.toString().toLowerCase() ?? '';
@@ -119,12 +125,14 @@ class _SearchSymptomsPageState extends State<SearchSymptomsPage> {
               .toList() ??
           [];
 
-      final matchesDiseaseName = diseaseName.contains(searchLower);
-      final matchesSymptom = symptoms.any(
-        (symptom) => symptom.contains(searchLower),
-      );
-
-      return matchesDiseaseName || matchesSymptom;
+      // Match if ANY of the search terms is found in name or symptoms
+      return searchTerms.any((term) {
+        final matchesDiseaseName = diseaseName.contains(term);
+        final matchesSymptom = symptoms.any(
+          (symptom) => symptom.contains(term),
+        );
+        return matchesDiseaseName || matchesSymptom;
+      });
     }).toList();
 
     setState(() {
